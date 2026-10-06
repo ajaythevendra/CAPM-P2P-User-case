@@ -1,0 +1,6 @@
+code;name;descr;criticality
+NEW;New;Requisition created, not yet submitted;5
+SUB;Submitted;Waiting for approval;2
+APR;Approved;Approved, ready to convert into a purchase order;3
+REJ;Rejected;Rejected by approver;1
+ORD;Ordered;Purchase order created;3

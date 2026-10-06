@@ -1,0 +1,162 @@
+{
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Requester",
+      "description": "Create and submit own purchase requisitions"
+    },
+    {
+      "name": "$XSAPPNAME.Approver",
+      "description": "Approve or reject purchase requisitions"
+    },
+    {
+      "name": "$XSAPPNAME.Buyer",
+      "description": "Maintain and release purchase orders"
+    },
+    {
+      "name": "$XSAPPNAME.Warehouse",
+      "description": "Post goods receipts"
+    },
+    {
+      "name": "$XSAPPNAME.AccountsPayable",
+      "description": "Enter and process supplier invoices"
+    },
+    {
+      "name": "$XSAPPNAME.APManager",
+      "description": "Release invoices despite a variance"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Full access"
+    }
+  ],
+  "attributes": [
+    {
+      "name": "plant",
+      "description": "Plants a buyer / warehouse clerk is responsible for",
+      "valueType": "string",
+      "valueRequired": false
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Requester",
+      "description": "Requester",
+      "scope-references": [
+        "$XSAPPNAME.Requester"
+      ]
+    },
+    {
+      "name": "Approver",
+      "description": "Approver",
+      "scope-references": [
+        "$XSAPPNAME.Approver"
+      ]
+    },
+    {
+      "name": "Buyer",
+      "description": "Buyer",
+      "scope-references": [
+        "$XSAPPNAME.Buyer"
+      ]
+    },
+    {
+      "name": "Warehouse",
+      "description": "Warehouse clerk",
+      "scope-references": [
+        "$XSAPPNAME.Warehouse"
+      ]
+    },
+    {
+      "name": "AccountsPayable",
+      "description": "Accounts payable clerk",
+      "scope-references": [
+        "$XSAPPNAME.AccountsPayable"
+      ]
+    },
+    {
+      "name": "APManager",
+      "description": "Accounts payable manager",
+      "scope-references": [
+        "$XSAPPNAME.APManager"
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Administrator",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "name": "PlantAccess",
+      "description": "Plant restriction for buyers / warehouse. Create roles from this template in the cockpit (static values) and put them into a SEPARATE, manually created role collection - app-defined collections are read-only",
+      "scope-references": [],
+      "attribute-references": [
+        "plant"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "P2P_Requester",
+      "description": "P2P - Requester",
+      "role-template-references": [
+        "$XSAPPNAME.Requester"
+      ]
+    },
+    {
+      "name": "P2P_Approver",
+      "description": "P2P - Approver",
+      "role-template-references": [
+        "$XSAPPNAME.Approver"
+      ]
+    },
+    {
+      "name": "P2P_Buyer",
+      "description": "P2P - Buyer - combine with a plant role collection (e.g. P2P_Plants_1000_1100)",
+      "role-template-references": [
+        "$XSAPPNAME.Buyer"
+      ]
+    },
+    {
+      "name": "P2P_Warehouse",
+      "description": "P2P - Warehouse - combine with a plant role collection (e.g. P2P_Plants_1000_1100)",
+      "role-template-references": [
+        "$XSAPPNAME.Warehouse"
+      ]
+    },
+    {
+      "name": "P2P_AccountsPayable",
+      "description": "P2P - Accounts Payable",
+      "role-template-references": [
+        "$XSAPPNAME.AccountsPayable"
+      ]
+    },
+    {
+      "name": "P2P_APManager",
+      "description": "P2P - Accounts Payable Manager",
+      "role-template-references": [
+        "$XSAPPNAME.AccountsPayable",
+        "$XSAPPNAME.APManager"
+      ]
+    },
+    {
+      "name": "P2P_Admin",
+      "description": "P2P - Administrator",
+      "role-template-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "credential-types": [
+      "binding-secret",
+      "x509"
+    ],
+    "redirect-uris": [
+      "https://*.hana.ondemand.com/**",
+      "https://*.applicationstudio.cloud.sap/**",
+      "http://localhost:5000/**"
+    ]
+  }
+}

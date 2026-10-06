@@ -1,0 +1,7 @@
+BusinessPartner;AddressID;StreetName;HouseNumber;PostalCode;CityName;Region;Country;Language
+17300001;28001;Drottninggatan;45;11121;Stockholm;AB;SE;EN
+17300002;28002;Industriestrasse;12;97424;Schweinfurt;BY;DE;DE
+17300003;28003;Market Street;500;94105;San Francisco;CA;US;EN
+17300004;28004;Rheinuferstrasse;8;47051;Duisburg;NW;DE;DE
+17300005;28005;Harbour Road;1;999077;Hong Kong;;HK;EN
+17300006;28006;MIDC Industrial Area;22;400093;Mumbai;MH;IN;EN

@@ -1,0 +1,120 @@
+### P2P flow – run with the "REST Client" VS Code extension (humao.rest-client)
+### Start the server first: cds watch
+### Mocked users (empty password) and their roles: see package.json → cds.requires.[development].auth.users
+###   alice, erin = Requester | carol = Approver+Requester | henry = Approver (limit 5,000)
+###   bob = Buyer+Warehouse (plants 1000, 1100) | dave = Buyer (2000, 3000) | walt = Warehouse (2000)
+###   paula = AccountsPayable | frank = Approver+AccountsPayable+APManager | admin = Admin
+
+@server = http://localhost:4004
+@laptop = 20000000-0000-4000-8000-000000000001
+@techsource = 10000000-0000-4000-8000-000000000001
+
+### 1. alice creates a requisition (→ creates a DRAFT, IsActiveEntity=false)
+# @name newPR
+POST {{server}}/odata/v4/requisition/PurchaseRequisitions
+Authorization: Basic alice:
+Content-Type: application/json
+
+{
+  "description": "12 laptops for the new Hamburg team",
+  "neededBy": "2027-01-31",
+  "items": [
+    { "material_ID": "{{laptop}}", "quantity": 12, "preferredSupplier_ID": "{{techsource}}" }
+  ]
+}
+
+### 2. activate the draft (= "Save" button in Fiori) → prNo, totals, item numbers are assigned
+@prID = {{newPR.response.body.ID}}
+POST {{server}}/odata/v4/requisition/PurchaseRequisitions(ID={{prID}},IsActiveEntity=false)/RequisitionService.draftActivate
+Authorization: Basic alice:
+Content-Type: application/json
+
+{}
+
+### 3. submit for approval
+POST {{server}}/odata/v4/requisition/PurchaseRequisitions(ID={{prID}},IsActiveEntity=true)/RequisitionService.submit
+Authorization: Basic alice:
+Content-Type: application/json
+
+{}
+
+### 4a. alice tries to approve → 403 (she has no Approver role; see srv/access-control.cds)
+POST {{server}}/odata/v4/approval/Requisitions({{prID}})/ApprovalService.approve
+Authorization: Basic alice:
+Content-Type: application/json
+
+{}
+
+### 4b. carol approves (limit 50,000)
+POST {{server}}/odata/v4/approval/Requisitions({{prID}})/ApprovalService.approve
+Authorization: Basic carol:
+Content-Type: application/json
+
+{ "comment": "OK for onboarding" }
+
+### 5. bob converts the PR into a purchase order
+# @name newPO
+POST {{server}}/odata/v4/requisition/PurchaseRequisitions(ID={{prID}},IsActiveEntity=true)/RequisitionService.createPurchaseOrder
+Authorization: Basic bob:
+Content-Type: application/json
+
+{}
+
+### 6. look at the PO with items and schedule lines
+@poID = {{newPO.response.body.ID}}
+GET {{server}}/odata/v4/purchasing/PurchaseOrders(ID={{poID}},IsActiveEntity=true)?$expand=items($expand=scheduleLines),supplier($select=name),status
+Authorization: Basic bob:
+
+### 7. release the PO to the supplier
+POST {{server}}/odata/v4/purchasing/PurchaseOrders(ID={{poID}},IsActiveEntity=true)/PurchasingService.release
+Authorization: Basic bob:
+Content-Type: application/json
+
+{}
+
+### 8. post a goods receipt for all open quantities (items omitted)
+POST {{server}}/odata/v4/purchasing/PurchaseOrders(ID={{poID}},IsActiveEntity=true)/PurchasingService.postGoodsReceipt
+Authorization: Basic bob:
+Content-Type: application/json
+
+{ "deliveryNote": "DN-4711" }
+
+### 9. get the PO item ID for the invoice
+# @name poItems
+GET {{server}}/odata/v4/invoice/PurchaseOrders({{poID}})/items?$select=ID,itemNo,quantity,receivedQuantity,netPrice
+Authorization: Basic frank:
+
+### 10. frank enters the supplier invoice (price 1,200 instead of 1,150 → will be BLOCKED)
+# @name newInvoice
+@poItemID = {{poItems.response.body.value[0].ID}}
+POST {{server}}/odata/v4/invoice/SupplierInvoices
+Authorization: Basic frank:
+Content-Type: application/json
+
+{
+  "supplierRef": "TS-2026-1201",
+  "purchaseOrder_ID": "{{poID}}",
+  "items": [ { "poItem_ID": "{{poItemID}}", "quantity": 12, "unitPrice": 1200 } ]
+}
+
+### 11. activate → 3-way match runs automatically (status BLK, see matchMessage)
+@invID = {{newInvoice.response.body.ID}}
+POST {{server}}/odata/v4/invoice/SupplierInvoices(ID={{invID}},IsActiveEntity=false)/InvoiceService.draftActivate
+Authorization: Basic frank:
+Content-Type: application/json
+
+{}
+
+### 12. override the block, then pay → PO gets status CLS (closed)
+POST {{server}}/odata/v4/invoice/SupplierInvoices(ID={{invID}},IsActiveEntity=true)/InvoiceService.overrideBlock
+Authorization: Basic frank:
+Content-Type: application/json
+
+{ "reason": "Price increase agreed by phone" }
+
+###
+POST {{server}}/odata/v4/invoice/SupplierInvoices(ID={{invID}},IsActiveEntity=true)/InvoiceService.markPaid
+Authorization: Basic frank:
+Content-Type: application/json
+
+{}

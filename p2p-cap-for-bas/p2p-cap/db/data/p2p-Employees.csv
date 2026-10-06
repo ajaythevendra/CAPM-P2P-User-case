@@ -1,0 +1,9 @@
+userId;name;email;jobTitle;plant_code;costCenter_code;approvalLimit;currency_code
+alice;Alice Becker;alice.becker@example.com;IT Specialist (Requester);1000;1000-IT;0;EUR
+bob;Bob Schmidt;bob.schmidt@example.com;Buyer;1000;1000-FAC;0;EUR
+carol;Carol Wagner;carol.wagner@example.com;IT Manager (Approver);1000;1000-IT;50000;EUR
+dave;Dave Miller;dave.miller@example.com;Global Buyer;2000;2000-MAINT;0;USD
+erin;Erin Rao;erin.rao@example.com;R&D Engineer (Requester);3000;3000-RND;0;EUR
+henry;Henry Klein;henry.klein@example.com;Team Lead (Approver);1000;1000-FAC;5000;EUR
+ajay.thevendra@cognizant.com;Ajay Thevendra;ajay.thevendra@cognizant.com;Demo user on BTP (all roles);1000;1000-IT;100000;EUR
+frank;Frank Hoffmann;frank.hoffmann@example.com;Head of Operations (Approver);1000;1000-PROD;1000000;EUR

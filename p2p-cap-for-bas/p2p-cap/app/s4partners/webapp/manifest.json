@@ -1,0 +1,145 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "p2p.s4partners",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "dataSources": {
+      "mainService": {
+        "uri": "odata/v4/purchasing/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Supplier-import": {
+          "semanticObject": "Supplier",
+          "action": "import",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "icon": "sap-icon://supplier"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "icons": {
+      "icon": "sap-icon://supplier"
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "p2p.s4partners.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "S4BusinessPartnersList",
+          "target": "S4BusinessPartnersList"
+        },
+        {
+          "pattern": "S4BusinessPartners({key}):?query:",
+          "name": "S4BusinessPartnersObjectPage",
+          "target": "S4BusinessPartnersObjectPage"
+        }
+      ],
+      "targets": {
+        "S4BusinessPartnersList": {
+          "type": "Component",
+          "id": "S4BusinessPartnersList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/S4BusinessPartners",
+              "variantManagement": "Page",
+              "initialLoad": "Enabled",
+              "navigation": {
+                "S4BusinessPartners": {
+                  "detail": {
+                    "route": "S4BusinessPartnersObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable",
+                    "selectionMode": "Multi"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "S4BusinessPartnersObjectPage": {
+          "type": "Component",
+          "id": "S4BusinessPartnersObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/S4BusinessPartners",
+              "editableHeaderContent": false,
+              "navigation": {},
+              "controlConfiguration": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "p2pcap.service"
+  }
+}

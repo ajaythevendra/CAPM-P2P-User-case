@@ -1,0 +1,8 @@
+code;name;descr;criticality
+NEW;New;Created, not yet sent to supplier;5
+REL;Released;Released and sent to supplier;2
+PGR;Partially Received;Some items or quantities received;2
+GRC;Fully Received;All quantities received;3
+INV;Invoiced;Fully invoiced;3
+CLS;Closed;Completed and closed;0
+CAN;Cancelled;Cancelled;1

@@ -1,0 +1,9 @@
+ID;supplierNo;name;taxId;email;phone;street;city;postalCode;country_code;currency_code;paymentTerms_code;rating;blocked
+10000000-0000-4000-8000-000000000001;S-100001;TechSource GmbH;DE811234567;sales@techsource.example;+49 40 123456;Speicherstadt 12;Hamburg;20457;DE;EUR;N030;5;false
+10000000-0000-4000-8000-000000000002;S-100002;OfficeWorld AG;DE298765432;orders@officeworld.example;+49 30 987654;Friedrichstr. 100;Berlin;10117;DE;EUR;N030;4;false
+10000000-0000-4000-8000-000000000003;S-100003;Industrial Parts Co.;US-36-1234567;sales@indparts.example;+1 312 555 0100;400 W Lake St;Chicago;60606;US;USD;N060;4;false
+10000000-0000-4000-8000-000000000004;S-100004;SteelMakers Ltd;GB123456789;info@steelmakers.example;+44 114 555 0199;Riverside Works;Sheffield;S9 2RX;GB;GBP;D214;3;false
+10000000-0000-4000-8000-000000000005;S-100005;SoftLicense Partners GmbH;DE355512345;licensing@softlic.example;+49 89 555 2200;Leopoldstr. 50;Munich;80802;DE;EUR;N030;4;false
+10000000-0000-4000-8000-000000000006;S-100006;CleanPro Services;DE300011122;service@cleanpro.example;+49 40 555 3300;Hafenstr. 5;Hamburg;20359;DE;EUR;N000;3;false
+10000000-0000-4000-8000-000000000007;S-100007;Bharat Components Pvt Ltd;29ABCDE1234F1Z5;sales@bharatcomp.example;+91 80 5555 0101;Electronic City Phase 1;Bengaluru;560100;IN;INR;N060;4;false
+10000000-0000-4000-8000-000000000008;S-100008;Legacy Supplies Inc.;US-75-7654321;contact@legacysup.example;+1 214 555 0188;12 Elm St;Dallas;75201;US;USD;N030;2;true

@@ -1,0 +1,20 @@
+# Build configuration for deployment to the HTML5 Application Repository
+specVersion: "4.0"
+metadata:
+  name: p2p.purchaseorders
+type: application
+resources:
+  configuration:
+    propertiesFileSourceEncoding: UTF-8
+builder:
+  resources:
+    excludes:
+      - "/test/**"
+      - "/localService/**"
+  customTasks:
+    - name: ui5-task-zipper
+      afterTask: generateCachebusterInfo
+      configuration:
+        archiveName: purchaseorders
+        additionalFiles:
+          - xs-app.json

@@ -1,0 +1,7 @@
+code;name;plant_code;responsible_userId
+1000-IT;IT Hamburg;1000;carol
+1000-PROD;Production Hamburg;1000;frank
+1000-FAC;Facility Management Hamburg;1000;frank
+1100-SALES;Sales Munich;1100;frank
+2000-MAINT;Maintenance Chicago;2000;frank
+3000-RND;R&D Bengaluru;3000;carol

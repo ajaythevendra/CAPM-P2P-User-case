@@ -1,0 +1,220 @@
+_schema-version: 3.3.0
+ID: p2p-cap
+version: 1.0.0
+description: "Procure-to-Pay (P2P) application built with SAP CAP on SAP BTP"
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+
+modules:
+  # ---------------------------------------------------------------------------
+  # CAP backend (Node.js) – OData services, business logic, authorization
+  # ---------------------------------------------------------------------------
+  - name: p2p-cap-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      memory: 256M
+      disk-quota: 1024M
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: p2p-cap-auth         # XSUAA: validates the JWT, roles → @restrict
+      - name: p2p-cap-db           # HDI container
+      - name: p2p-cap-destination  # Destination service: resolves 'S4HANA_BP'
+
+  # ---------------------------------------------------------------------------
+  # HDI deployer – runs once per deployment INSIDE BTP, creates/migrates tables
+  # ---------------------------------------------------------------------------
+  - name: p2p-cap-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+    requires:
+      - name: p2p-cap-db
+
+  # ---------------------------------------------------------------------------
+  # UI content: uploads all app zips into the HTML5 Application Repository
+  # ---------------------------------------------------------------------------
+  - name: p2p-cap-app-deployer
+    type: com.sap.application.content
+    path: gen
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: p2pcapapprovals
+          artifacts:
+            - approvals.zip
+          target-path: app/
+        - name: p2pcapinvoices
+          artifacts:
+            - invoices.zip
+          target-path: app/
+        - name: p2pcappurchaseorders
+          artifacts:
+            - purchaseorders.zip
+          target-path: app/
+        - name: p2pcaprequisitions
+          artifacts:
+            - requisitions.zip
+          target-path: app/
+        - name: p2pcaps4partners
+          artifacts:
+            - s4partners.zip
+          target-path: app/
+    requires:
+      - name: p2p-cap-auth
+      - name: srv-api
+      - name: p2p-cap-html5-repo-host
+        parameters:
+          content-target: true
+    # note: the backend destination 'srv-api' is defined on the destination
+    # service instance (resource p2p-cap-destination), not in the repo content
+
+  # ---------------------------------------------------------------------------
+  # The Fiori apps – each built with UI5 tooling into dist/<app>.zip
+  # (package.json "build" script + ui5-deploy.yaml with ui5-task-zipper)
+  # ---------------------------------------------------------------------------
+  - name: p2pcapapprovals
+    type: html5
+    path: app/approvals
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands: [npm install, npm run build]
+      supported-platforms: []
+  - name: p2pcapinvoices
+    type: html5
+    path: app/invoices
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands: [npm install, npm run build]
+      supported-platforms: []
+  - name: p2pcappurchaseorders
+    type: html5
+    path: app/purchaseorders
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands: [npm install, npm run build]
+      supported-platforms: []
+  - name: p2pcaprequisitions
+    type: html5
+    path: app/requisitions
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands: [npm install, npm run build]
+      supported-platforms: []
+  - name: p2pcaps4partners
+    type: html5
+    path: app/s4partners
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands: [npm install, npm run build]
+      supported-platforms: []
+
+  # ---------------------------------------------------------------------------
+  # Destinations for the MANAGED approuter (Work Zone / HTML5 runtime):
+  # link the apps (sap.cloud.service = p2pcap.service) to the repo and to XSUAA
+  # ---------------------------------------------------------------------------
+  - name: p2p-cap-destinations
+    type: com.sap.application.content
+    requires:
+      - name: p2p-cap-auth
+        parameters:
+          service-key:
+            name: p2p-cap-auth-key
+      - name: p2p-cap-html5-repo-host
+        parameters:
+          service-key:
+            name: p2p-cap-html5-repo-host-key
+      - name: srv-api
+      - name: p2p-cap-destination
+        parameters:
+          content-target: true
+    build-parameters:
+      no-source: true
+    parameters:
+      content:
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: p2p-cap-html5-repository
+              ServiceInstanceName: p2p-cap-html5-repo-host
+              ServiceKeyName: p2p-cap-html5-repo-host-key
+              sap.cloud.service: p2pcap.service
+            - Name: p2p-cap-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: p2p-cap-auth
+              ServiceKeyName: p2p-cap-auth-key
+              sap.cloud.service: p2pcap.service
+
+resources:
+  # XSUAA – scopes, role templates, role collections from xs-security.json
+  # (only xsappname + tenant-mode are set here; everything else lives in the file,
+  #  because a 'config' key would REPLACE the same key from the file)
+  - name: p2p-cap-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: p2p-cap-${org}-${space}
+        tenant-mode: dedicated
+
+  # HDI container – reuse the container 'p2p-db' created in Phase 5
+  - name: p2p-cap-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+      service-name: p2p-db
+
+  - name: p2p-cap-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+      config:
+        # lets the HTML5 runtime / Work Zone discover the apps through the
+        # destinations of THIS instance (otherwise Content Explorer shows 0 apps)
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              # route target of xs-app.json ("destination": "srv-api") → CAP backend
+              - Name: srv-api
+                URL: ~{srv-api/srv-url}
+                Authentication: NoAuthentication
+                Type: HTTP
+                ProxyType: Internet
+                HTML5.ForwardAuthToken: true     # pass the user's JWT to CAP
+                HTML5.DynamicDestination: true
+    requires:
+      - name: srv-api
+
+  - name: p2p-cap-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host

@@ -1,0 +1,6 @@
+code;name;descr;criticality
+NEW;Received;Invoice received, not yet checked;5
+MAT;Matched;3-way match successful;3
+BLK;Blocked;Blocked for payment - variance found;1
+APR;Released;Released for payment;3
+PAI;Paid;Payment executed;3

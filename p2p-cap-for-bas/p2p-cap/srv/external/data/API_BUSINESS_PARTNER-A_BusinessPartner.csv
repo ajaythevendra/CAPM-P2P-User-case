@@ -1,0 +1,7 @@
+BusinessPartner;BusinessPartnerCategory;BusinessPartnerFullName;BusinessPartnerGrouping;OrganizationBPName1;SearchTerm1;Industry;BusinessPartnerIsBlocked;CreationDate;LastChangeDate
+17300001;2;Nordic Office Solutions AB;BPEX;Nordic Office Solutions AB;NORDICOFF;RETAIL;false;2021-03-15;2026-08-01
+17300002;2;Precision Bearings GmbH;BPEX;Precision Bearings GmbH;PRECBEAR;INDUST;false;2019-11-02;2026-09-12
+17300003;2;Global Cloud Services Inc.;BPEX;Global Cloud Services Inc.;GLOBCLOUD;IT;false;2022-06-20;2026-07-30
+17300004;2;Rhine Logistics KG;BPEX;Rhine Logistics KG;RHINELOG;TRANSP;false;2018-01-10;2026-05-05
+17300005;2;Shady Trading Ltd;BPEX;Shady Trading Ltd;SHADY;TRADE;true;2020-09-09;2026-09-30
+17300006;2;Mumbai Steel Works Pvt Ltd;BPEX;Mumbai Steel Works Pvt Ltd;MUMSTEEL;METAL;false;2023-02-14;2026-09-01

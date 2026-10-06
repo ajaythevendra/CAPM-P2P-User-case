@@ -1,0 +1,137 @@
+{
+  "name": "p2p-cap",
+  "version": "1.0.0",
+  "description": "Procure-to-Pay (P2P) application built with SAP CAP on SAP BTP",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@cap-js/hana": "^3",
+    "@sap-cloud-sdk/http-client": "^4.9.1",
+    "@sap-cloud-sdk/resilience": "^4.9.1",
+    "@sap/cds": "^10",
+    "@sap/cds-common-content": "^3",
+    "@sap/xssec": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/cds-test": "^1.0.2",
+    "@cap-js/sqlite": "^3",
+    "@sap/cds-dk": "^10",
+    "chai": "^6.3.0",
+    "chai-as-promised": "^8.0.2"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "test": "node --test"
+  },
+  "cds": {
+    "requires": {
+      "API_BUSINESS_PARTNER": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_BUSINESS_PARTNER",
+        "[sandbox]": {
+          "credentials": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+          }
+        },
+        "[hybrid]": {
+          "credentials": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "S4HANA_BP",
+            "path": "/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+          }
+        }
+      },
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "alice": {
+              "roles": [
+                "Requester"
+              ]
+            },
+            "erin": {
+              "roles": [
+                "Requester"
+              ]
+            },
+            "carol": {
+              "roles": [
+                "Approver",
+                "Requester"
+              ]
+            },
+            "henry": {
+              "roles": [
+                "Approver"
+              ]
+            },
+            "bob": {
+              "roles": [
+                "Buyer",
+                "Warehouse"
+              ],
+              "attr": {
+                "plant": [
+                  "1000",
+                  "1100"
+                ]
+              }
+            },
+            "dave": {
+              "roles": [
+                "Buyer"
+              ],
+              "attr": {
+                "plant": [
+                  "2000",
+                  "3000"
+                ]
+              }
+            },
+            "walt": {
+              "roles": [
+                "Warehouse"
+              ],
+              "attr": {
+                "plant": [
+                  "2000"
+                ]
+              }
+            },
+            "paula": {
+              "roles": [
+                "AccountsPayable"
+              ]
+            },
+            "frank": {
+              "roles": [
+                "Approver",
+                "AccountsPayable",
+                "APManager"
+              ]
+            },
+            "admin": {
+              "roles": [
+                "Admin"
+              ]
+            }
+          }
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa"
+      },
+      "destinations": true,
+      "html5-repo": true,
+      "workzone": true
+    }
+  }
+}

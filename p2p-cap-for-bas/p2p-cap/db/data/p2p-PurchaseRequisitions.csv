@@ -1,0 +1,7 @@
+ID;prNo;description;requester_userId;plant_code;costCenter_code;priority_code;requestDate;neededBy;status_code;totalAmount;currency_code;justification;purchaseOrder_ID
+30000000-0000-4000-8000-000000000001;10000001;Laptops for new IT joiners;alice;1000;1000-IT;H;2026-08-18;2026-09-30;ORD;6695.00;EUR;Five new developers start in October;40000000-0000-4000-8000-000000000001
+30000000-0000-4000-8000-000000000002;10000002;Office supplies Q4;alice;1000;1000-FAC;M;2026-09-22;2026-10-15;APR;1514.00;EUR;Regular quarterly replenishment;
+30000000-0000-4000-8000-000000000003;10000003;Microsoft and antivirus license renewal 2027;alice;1000;1000-IT;H;2026-09-29;2026-12-01;SUB;38520.00;EUR;Annual renewal for 120 users, current licenses expire 31.12.;
+30000000-0000-4000-8000-000000000004;10000004;Maintenance spares production line 3;alice;1000;1000-PROD;M;2026-10-02;2026-10-31;NEW;1685.00;EUR;Preventive maintenance in November;
+30000000-0000-4000-8000-000000000005;10000005;Prototype material for R&D;erin;3000;3000-RND;L;2026-09-10;2026-10-20;REJ;5755.00;EUR;Material for prototype housing v2;
+30000000-0000-4000-8000-000000000006;10000006;External consulting for S/4HANA migration;alice;1000;1000-IT;H;2026-09-01;2026-10-31;ORD;20000.00;EUR;160 hours senior consultant for data migration;40000000-0000-4000-8000-000000000003

@@ -1,0 +1,5 @@
+code;name;netDays;discountDays;discountPercent
+N000;Due immediately;0;0;0
+N030;Net 30 days;30;0;0
+N060;Net 60 days;60;0;0
+D214;2% in 14 days, net 30;30;14;2
